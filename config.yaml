@@ -1,0 +1,48 @@
+# YAAT - Yet Another Auto-charter Tool
+# Default configuration
+
+audio:
+  sample_rate: 44100
+  n_fft: 4096
+  hop_length: 441        # 10ms at 44100 Hz
+  n_mels: 512
+
+separation:
+  model: "htdemucs_6s"
+  stem: "guitar"          # Which Demucs stem to use for chart generation
+  device: "auto"          # "auto", "cuda", or "cpu"
+
+onset:
+  gamma: 0.94             # NINOS sparsity fraction
+  p: 0.99                 # Spectrogram amplitude filter percentile
+  w1: 10                  # Peak picking: left local max window
+  w2: 1                   # Peak picking: right local max window
+  w3: 1                   # Peak picking: left threshold window
+  w4: 8                   # Peak picking: right threshold window
+  w5: 10                  # Peak picking: minimum inter-onset distance (frames)
+  delta: 1.0              # Peak picking: threshold offset
+
+model:
+  weights_path: ""        # Path to tensor-hero OnsetTransformer checkpoint
+  device: "auto"          # "auto", "cuda", or "cpu"
+  segment_duration_s: 4.0
+  max_onsets_per_segment: 50
+  embedding_size: 512
+  vocab_size: 25
+  num_heads: 8
+  encoder_layers: 2
+  decoder_layers: 2
+  forward_expansion: 2048
+  dropout: 0.1
+
+output:
+  chart_name: ""          # Song name (auto-detected from filename if empty)
+  artist: "Unknown Artist"
+  charter: "YAAT"
+
+postprocess:
+  max_notes_per_second: 15
+  min_note_gap_ms: 20     # Minimum gap between notes in milliseconds
+  min_total_notes: 10     # Abort if fewer notes than this
+
+debug: false              # Save intermediate .npy arrays to debug/ subfolder
