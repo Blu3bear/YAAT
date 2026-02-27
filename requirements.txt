@@ -1,7 +1,6 @@
 torch>=2.0
 torchaudio>=2.0
 librosa>=0.10
-demucs>=4.0
 numpy
 pyyaml
 pydantic>=2.0

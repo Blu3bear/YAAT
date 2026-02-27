@@ -1,0 +1,6 @@
+[submodule "external/demucs"]
+	path = external/demucs
+	url = https://github.com/adefossez/demucs.git
+[submodule "external/tensor-hero"]
+	path = external/tensor-hero
+	url = https://github.com/elliottwaissbluth/tensor-hero.git
