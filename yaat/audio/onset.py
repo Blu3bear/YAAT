@@ -7,6 +7,8 @@ Implements the onset detection pipeline from TensorHero:
     4. Convert to 10ms time bins.
 """
 
+from __future__ import annotations
+
 import math
 
 import numpy as np

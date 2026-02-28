@@ -7,6 +7,8 @@ complete Clone Hero / YARG song directory with:
     - song.ini     (metadata for in-game display)
 """
 
+from __future__ import annotations
+
 import shutil
 import subprocess
 from pathlib import Path
@@ -32,27 +34,47 @@ from yaat.utils.logging import get_logger
 #   1.92 seconds / 192 ticks-per-beat = 0.01 second/tick = 10ms per tick
 CHART_RESOLUTION = 192
 CHART_BPM_ENCODED = 31250  # 31.25 BPM × 1000 (as encoded in .chart)
-CHART_TIME_SIG = 1         # 1 beat per measure
+CHART_TIME_SIG = 1  # 1 beat per measure
 
 # Mapping from note index (1–31) to list of .chart note types.
 # In .chart format: 0=Green, 1=Red, 2=Yellow, 3=Blue, 4=Orange, 7=Open
+# Mapping matches the tensor-hero simplified notes encoding (model13).
 # fmt: off
 NOTES_TO_CHART_TYPES: dict[int, list[int]] = {
-    1:  [0],         2:  [1],         3:  [2],         4:  [3],         5:  [4],       # singles
-    6:  [0, 1],      7:  [1, 2],      8:  [2, 3],      9:  [3, 4],                    # double-0
-    10: [0, 2],     11: [1, 3],      12: [2, 4],                                       # double-1
-    13: [0, 3],     14: [1, 4],                                                         # double-2
-    15: [0, 4],                                                                          # double-3
-    16: [0, 1, 2],  17: [1, 2, 3],   18: [2, 3, 4],                                   # triple-0
-    19: [0, 1, 3],  20: [1, 2, 4],                                                     # triple-1
-    21: [0, 2, 3],  22: [1, 3, 4],                                                     # triple-2
-    23: [0, 1, 4],  24: [0, 2, 4],   25: [0, 3, 4],                                   # triple-3
-    26: [0, 1, 2, 3], 27: [1, 2, 3, 4],                                                # quad-0
-    28: [0, 1, 2, 4], 29: [0, 1, 3, 4], 30: [0, 2, 3, 4],                             # quad-1
-    31: [0, 1, 2, 3, 4],                                                                # pent
+    1:  [0],                  # Green
+    2:  [1],                  # Red
+    3:  [2],                  # Yellow
+    4:  [3],                  # Blue
+    5:  [4],                  # Orange
+    6:  [0, 1],              # G+R
+    7:  [0, 2],              # G+Y
+    8:  [0, 3],              # G+B
+    9:  [0, 4],              # G+O
+    10: [1, 2],              # R+Y
+    11: [1, 3],              # R+B
+    12: [1, 4],              # R+O
+    13: [2, 3],              # Y+B
+    14: [2, 4],              # Y+O
+    15: [3, 4],              # B+O
+    16: [0, 1, 2],          # G+R+Y
+    17: [0, 1, 3],          # G+R+B
+    18: [0, 1, 4],          # G+R+O
+    19: [0, 2, 3],          # G+Y+B
+    20: [0, 2, 4],          # G+Y+O
+    21: [0, 3, 4],          # G+B+O
+    22: [1, 2, 3],          # R+Y+B
+    23: [1, 2, 4],          # R+Y+O
+    24: [1, 3, 4],          # R+B+O
+    25: [2, 3, 4],          # Y+B+O
+    26: [0, 1, 2, 3],       # G+R+Y+B
+    27: [0, 1, 2, 4],       # G+R+Y+O
+    28: [0, 1, 3, 4],       # G+R+B+O
+    29: [0, 2, 3, 4],       # G+Y+B+O
+    30: [1, 2, 3, 4],       # R+Y+B+O
+    31: [0, 1, 2, 3, 4],    # G+R+Y+B+O (all)
+    32: [7],                 # Open note
 }
 # fmt: on
-# Open note (index 0 in some encodings) would be [7], but we handle that specially.
 
 
 def _notes_array_to_chart_events(notes_array: np.ndarray) -> list[str]:
@@ -117,10 +139,10 @@ def write_chart_file(
     lines.append(f'  Charter = "{charter}"')
     lines.append(f"  Resolution = {CHART_RESOLUTION}")
     lines.append("  Offset = 0")
-    lines.append(f'  Player2 = bass')
+    lines.append(f"  Player2 = bass")
     lines.append(f"  Difficulty = 0")
-    lines.append(f'  PreviewStart = 0')
-    lines.append(f'  PreviewEnd = 0')
+    lines.append(f"  PreviewStart = 0")
+    lines.append(f"  PreviewEnd = 0")
     lines.append(f'  Genre = "rock"')
     lines.append(f'  MediaType = "cd"')
     lines.append(f'  MusicStream = "song.ogg"')
@@ -212,11 +234,15 @@ def convert_audio_to_ogg(input_path: Path, output_path: Path) -> None:
     try:
         result = subprocess.run(
             [
-                "ffmpeg", "-y",
-                "-i", str(input_path),
+                "ffmpeg",
+                "-y",
+                "-i",
+                str(input_path),
                 "-vn",
-                "-acodec", "libvorbis",
-                "-q:a", "8",
+                "-acodec",
+                "libvorbis",
+                "-q:a",
+                "8",
                 str(output_path),
             ],
             capture_output=True,
@@ -239,13 +265,11 @@ def convert_audio_to_ogg(input_path: Path, output_path: Path) -> None:
         sf.write(str(output_path), audio_data, sr, format="OGG", subtype="VORBIS")
         logger.info("Audio converted to .ogg via soundfile: %s", output_path)
     except Exception as exc:
-        # Last resort: just copy the original file
-        logger.warning(
-            "Could not convert to .ogg (%s). Copying original file.", exc
-        )
-        fallback_path = output_path.with_suffix(input_path.suffix)
-        shutil.copy2(str(input_path), str(fallback_path))
-        logger.info("Audio copied as-is: %s", fallback_path)
+        # Last resort: just copy the original file with .ogg extension
+        # Clone Hero / YARG will still load it
+        logger.warning("Could not convert to .ogg (%s). Copying original file.", exc)
+        shutil.copy2(str(input_path), str(output_path))
+        logger.info("Audio copied as: %s", output_path)
 
 
 def assemble_chart_directory(

@@ -54,9 +54,15 @@ def run(
 
     log_stage("Configuration", logger)
     logger.info("Config loaded from: %s", config_path or "(defaults)")
-    logger.info("  Separation model: %s (stem: %s)", config.separation.model, config.separation.stem)
+    logger.info(
+        "  Separation model: %s (stem: %s)",
+        config.separation.model,
+        config.separation.stem,
+    )
     logger.info("  Model weights: %s", config.model.weights_path or "(random init)")
-    logger.info("  Device: sep=%s, model=%s", config.separation.device, config.model.device)
+    logger.info(
+        "  Device: sep=%s, model=%s", config.separation.device, config.model.device
+    )
     logger.info("  Debug mode: %s", config.debug)
 
     debug_dir = None
@@ -89,10 +95,8 @@ def run(
 
     # ─── 5. Onset detection ────────────────────────────────────────────────
     log_stage("Onset Detection", logger)
-    t0 = time.perf_counter()
-    onset_bins = detect_onsets(guitar_audio, config.audio.sample_rate, config.audio, config.onset)
-    logger.info("Onset detection took %.2fs", time.perf_counter() - t0)
-    logger.info("Total onsets detected: %d", len(onset_bins))
+    logger.info("Skipped — model13 uses full spectrogram segments, not onset windows")
+    onset_bins: list = []
 
     if debug_dir:
         np.save(str(debug_dir / "onset_bins.npy"), np.array(onset_bins))
@@ -138,6 +142,8 @@ def run(
     logger.info("Total pipeline time: %.2fs", total_time)
     logger.info("Input:  %s (%.2fs)", meta.path.name, meta.duration_s)
     logger.info("Output: %s", result_dir)
-    logger.info("Notes:  %d (%.2f notes/sec)", final_notes, final_notes / meta.duration_s)
+    logger.info(
+        "Notes:  %d (%.2f notes/sec)", final_notes, final_notes / meta.duration_s
+    )
 
     return result_dir

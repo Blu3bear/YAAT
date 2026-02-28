@@ -85,9 +85,19 @@ PLURALITY_TABLE: list[list[int]] = [
 ]
 
 PLURALITY_NAMES = [
-    "single", "double-0", "double-1", "double-2", "double-3",
-    "triple-0", "triple-1", "triple-2", "triple-3",
-    "quad-0", "quad-1", "pent", "open",
+    "single",
+    "double-0",
+    "double-1",
+    "double-2",
+    "double-3",
+    "triple-0",
+    "triple-1",
+    "triple-2",
+    "triple-3",
+    "quad-0",
+    "quad-1",
+    "pent",
+    "open",
 ]
 
 # Build reverse lookup: note_index → (plurality_idx, anchor)
@@ -102,7 +112,7 @@ def encode_contour(notes_array: np.ndarray) -> list[tuple[int, int]]:
 
     Args:
         notes_array: 1D array where each index is a 10ms tick and values are
-            note indices (0 = no note, 1–31 = note).
+            note indices (0 = no note, 1-31 = note).
 
     Returns:
         List of (plurality_token, motion_token) pairs for each onset.

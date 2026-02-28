@@ -4,6 +4,8 @@ Separates audio into 6 stems (drums, bass, other, vocals, guitar, piano)
 and extracts the guitar stem for chart generation.
 """
 
+from __future__ import annotations
+
 import time
 
 import numpy as np
