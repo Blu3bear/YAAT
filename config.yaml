@@ -23,12 +23,12 @@ onset:
   delta: 1.0              # Peak picking: threshold offset
 
 model:
-  weights_path: ""        # Path to tensor-hero OnsetTransformer checkpoint
+  weights_path: "external/tensor-hero/model/saved_models_backup/model13/model13.pt"
   device: "auto"          # "auto", "cuda", or "cpu"
   segment_duration_s: 4.0
   max_onsets_per_segment: 50
   embedding_size: 512
-  vocab_size: 25
+  vocab_size: 435
   num_heads: 8
   encoder_layers: 2
   decoder_layers: 2
