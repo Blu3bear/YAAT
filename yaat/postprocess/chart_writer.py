@@ -19,14 +19,6 @@ import soundfile as sf
 from yaat.config import OutputConfig
 from yaat.utils.logging import get_logger
 
-# TensorHero tick encoding: Resolution=192, BPM=31.25, TS=1
-# This means each beat = 192 ticks, and at 31.25 BPM:
-#   192 ticks/beat ÷ 31.25 beats/min = 6.144 ticks/sec ... wait
-# Actually: each 10ms frame maps to exactly 1 tick at R=192 with the
-# combined B=31.25 and TS=1 encoding the paper uses, BUT the .chart
-# format writes ticks, not frames. Since each frame IS one "resolution unit"
-# in their encoding, tick = frame_index (we just scale by the resolution).
-#
 # Per TensorHero inference.py: tick = frame_index (i.e. ticks ARE frame indices)
 # The chart header sets R=192 and B=31250 (31.25 BPM * 1000) with TS=1.
 # This maps 1 resolution-unit = 10ms because:

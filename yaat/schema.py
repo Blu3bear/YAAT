@@ -16,7 +16,7 @@ from yaat.utils.logging import get_logger
 SUPPORTED_EXTENSIONS = {".wav", ".ogg", ".mp3"}
 
 # Constraints
-MIN_DURATION_S = 1.0
+MIN_DURATION_S = 10.0
 MAX_DURATION_S = 1800.0  # 30 minutes
 
 
