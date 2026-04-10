@@ -8,7 +8,7 @@ from typing import Optional
 
 import torch
 import yaml
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator
 
 
 class AudioConfig(BaseModel):
@@ -22,6 +22,8 @@ class AudioConfig(BaseModel):
 
 class SeparationConfig(BaseModel):
     """Demucs source separation parameters."""
+
+    model_config = ConfigDict(validate_default=True)
 
     model: str = "htdemucs_6s"
     stem: str = "guitar"
@@ -50,6 +52,8 @@ class OnsetConfig(BaseModel):
 
 class ModelConfig(BaseModel):
     """OnsetTransformer model parameters."""
+
+    model_config = ConfigDict(validate_default=True)
 
     weights_path: str = ""
     device: str = "auto"

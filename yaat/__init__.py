@@ -10,4 +10,10 @@ def generate_chart(*args, **kwargs):
     return run(*args, **kwargs)
 
 
-__all__ = ["generate_chart"]
+def generate_chart_agentic(*args, **kwargs):
+    """Run the agentic YAAT orchestration flow."""
+    from yaat.agentic import run_agentic
+    return run_agentic(*args, **kwargs)
+
+
+__all__ = ["generate_chart", "generate_chart_agentic"]

@@ -20,6 +20,9 @@ def setup_logging(level: int = logging.INFO) -> logging.Logger:
     """
     logger = logging.getLogger(_LOGGER_NAME)
     if logger.handlers:
+        logger.setLevel(level)
+        for handler in logger.handlers:
+            handler.setLevel(level)
         return logger
 
     logger.setLevel(level)
